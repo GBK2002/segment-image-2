@@ -1,0 +1,107 @@
+
+```markdown
+# SAM2 Real-Time Object Tracking (Modified Fork)
+
+This repository is a modified fork of [Meta's Segment Anything 2 (SAM2)](https://github.com/facebookresearch/sam2), tailored to support real-time object segmentation from webcam input using SAM2.1.
+
+## 🔍 About This Fork
+
+This project includes:
+- A fully functional real-time webcam object segmentation pipeline using SAM2.1.
+- Support for the **standard SAM2.1 models** (`base_plus`, `small`, etc.).
+- Experimental integration with the **Sierra-Tiny** lightweight model to reduce latency on edge devices.
+- CUDA-accelerated frame processing with AMP (`autocast`) and threaded pipelines.
+
+> **Note:** Work on the lightweight model (`sam2.1_hiera_tiny.pt`) is ongoing. Results are functional but not fully optimized for stability or accuracy.
+
+---
+
+## 🧠 Models Supported
+
+| Model | Size | Performance | Status |
+|-------|------|-------------|--------|
+| `sam2.1_hiera_base_plus` | ✅ Full | High accuracy | ✅ Stable |
+| `sam2.1_hiera_tiny`      | ✅ Small | Lower latency | ⚠️ Experimental |
+
+Model checkpoints can be downloaded via:
+
+```bash
+# Example using curl
+curl -L -o checkpoints/sam2.1_hiera_base_plus.pt https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2.1_hiera_base_plus.pt
+
+# Tiny model (not yet optimized)
+curl -L -o checkpoints/sam2.1_hiera_tiny.pt https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2.1_hiera_tiny.pt
+```
+
+---
+
+## 🛠️ Setup Instructions
+
+### 1. Clone This Repository
+
+```bash
+git clone https://github.com/<your-username>/sam2.git
+cd sam2
+```
+
+### 2. Install Requirements
+
+```bash
+pip install -e .
+pip install opencv-python torch torchvision torchaudio tqdm hydra-core
+```
+
+### 3. Run Real-Time Segmentation
+
+```bash
+python live_cam_tiny.py
+```
+
+- Click on the webcam preview to select an object.
+- SAM2 will segment and track the object across frames.
+
+---
+
+## 🧪 Known Issues (Tiny Model)
+
+- The `sam2.1_hiera_tiny.pt` model loads with additional unused parameters, causing state dict mismatches.
+- Some frame segments are unstable when switching between motion or occlusion.
+- Optimization for CUDA Graphs is partially implemented but needs tuning for low-memory GPUs.
+
+---
+
+## 🛣️ Future Directions
+
+- [ ] Implement strict model pruning to improve tiny model loading.
+- [ ] Add temporal smoothing or optical flow assist for better tiny model tracking.
+- [ ] Benchmark against standard models to quantify latency/performance tradeoffs.
+- [ ] Deploy lightweight variant for mobile/IoT use cases.
+
+---
+
+## 📁 File Structure
+
+```
+segment-anything-2/
+│
+├── live_cam_tiny.py         # Real-time demo script (webcam)
+├── checkpoints/             # Folder for model .pt files
+├── sam2/                    # Modified SAM2 core library
+│   ├── sam2_hiera_t.yaml    # Config file for tiny model
+│   └── ...
+├── README.md
+└── ...
+```
+
+---
+
+## 🙏 Acknowledgements
+
+- [Meta AI](https://github.com/facebookresearch/sam2) for the original SAM2 repository.
+- [Hydra](https://hydra.cc/) and [PyTorch](https://pytorch.org) for powering the backend.
+
+---
+
+## 📜 License
+
+This repository inherits the [MIT License](https://github.com/facebookresearch/sam2/blob/main/LICENSE) from the original SAM2 repo by Meta.
